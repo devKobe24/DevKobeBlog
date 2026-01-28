@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  # 1. Nginx (웹 서버) - 최전방 수비수
+  # 1. Nginx (웹 서버 & HTTPS 처리)
   nginx:
     image: nginx:1.25
     container_name: nginx
@@ -16,7 +16,7 @@ services:
       - blog-app
     restart: always
 
-  # 2. Certbot (SSL 인증서 발급 도우미)
+  # 2. Certbot (무료 SSL 인증서 발급기)
   certbot:
     image: certbot/certbot
     container_name: certbot
@@ -24,11 +24,11 @@ services:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
 
-  # 3. Spring Boot 앱 (외부 포트 노출 X)
+  # 3. Spring Boot 앱 (외부 노출 X, Nginx 뒤에 숨음)
   blog-app:
     container_name: blog-app
     build: .
-    # ports 섹션 제거 (Nginx가 내부망으로 연결함)
+    # ports 섹션 삭제됨 (Nginx가 8080으로 연결해줌)
     environment:
       - SPRING_PROFILES_ACTIVE=prod
       - SPRING_DATASOURCE_URL=jdbc:mysql://blog-db:3306/blog_prod?useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=UTF-8&serverTimezone=Asia/Seoul
@@ -37,11 +37,12 @@ services:
       - CLOUD_AWS_CREDENTIALS_ACCESS_KEY=${AWS_ACCESS_KEY}
       - CLOUD_AWS_CREDENTIALS_SECRET_KEY=${AWS_SECRET_KEY}
       - BLOG_GIT_WEBHOOK_SECRET=${WEBHOOK_SECRET}
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
     depends_on:
       - blog-db
     restart: always
 
-  # 4. DB
+  # 4. MySQL DB (기존과 동일)
   blog-db:
     container_name: blog-db
     image: mysql:8.0
