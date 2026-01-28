@@ -54,3 +54,7 @@ application-*.yml
 
 # OS
 .DS_Store
+
+# 운영 데이터 (절대 Git 금지)
+db_data/
+certbot/
