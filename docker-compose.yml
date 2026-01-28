@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  # 1. Spring Boot 애플리케이션
+  blog-app:
+    container_name: blog-app
+    build: .
+    ports:
+      - "80:8080" # 외부 80포트(HTTP) -> 내부 8080포트 연결
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=jdbc:mysql://blog-db:3306/blog_prod?useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=UTF-8&serverTimezone=Asia/Seoul
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD} # .env 파일에서 가져옴
+      # AWS 및 Git 설정 (서버 환경변수로 주입)
+      - CLOUD_AWS_CREDENTIALS_ACCESS_KEY=${AWS_ACCESS_KEY}
+      - CLOUD_AWS_CREDENTIALS_SECRET_KEY=${AWS_SECRET_KEY}
+      - BLOG_GIT_WEBHOOK_SECRET=${WEBHOOK_SECRET}
+    depends_on:
+      - blog-db
+    restart: always
+
+  # 2. MySQL 데이터베이스
+  blog-db:
+    container_name: blog-db
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: blog_prod
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      TZ: Asia/Seoul
+    volumes:
+      - ./db_data:/var/lib/mysql # DB 데이터를 로컬 폴더에 저장 (컨테이너 삭제돼도 데이터 유지)
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    restart: always

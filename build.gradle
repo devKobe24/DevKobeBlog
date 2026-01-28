@@ -1,0 +1,67 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.2.2' // Spring Boot 3.x 최신 안정 버전 권장
+    id 'io.spring.dependency-management' version '1.1.4'
+}
+
+group = 'com.kobe.devkobeblog'
+version = '0.0.1-SNAPSHOT'
+description = 'DevKobeBlog'
+
+java {
+    sourceCompatibility = '17' // Java 17 LTS (또는 21)
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+// AWS SDK 버전 관리를 위한 BOM (Bill of Materials)
+dependencyManagement {
+    imports {
+        mavenBom 'software.amazon.awssdk:bom:2.21.1'
+    }
+}
+
+dependencies {
+// 1. Web & Template Engine
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-starter-validation' // DTO 검증용
+
+    // 2. Database (JPA, MySQL, H2)
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    runtimeOnly 'com.mysql:mysql-connector-j' // 운영 환경 (Prod)
+    runtimeOnly 'com.h2database:h2'           // 개발 환경 (Dev)
+
+    // 3. Utils (Lombok)
+    // Java 25 지원을 위해 1.18.40 이상 필요 (현재 최신: 1.18.42)
+    compileOnly 'org.projectlombok:lombok:1.18.42'
+    annotationProcessor 'org.projectlombok:lombok:1.18.42'
+
+    // 4. AWS S3 (SDK v2)
+    // BOM을 사용하여 버전을 관리하므로 버전 명시 불필요
+    implementation 'software.amazon.awssdk:s3'
+
+    // 5. Git-Driven CMS Core (JGit)
+    // Github Webhook 수신 시 Git Pull을 수행하기 위함
+    implementation 'org.eclipse.jgit:org.eclipse.jgit:6.8.0.202311291450-r'
+
+    // 6. Markdown Parser (Flexmark)
+    // 마크다운 파싱 및 HTML 변환, 이미지 경로 추출용
+    // flexmark-all은 모든 확장을 포함하여 편리하지만, 추후 필요한 것만 남겨 경량화 가능
+    implementation 'com.vladsch.flexmark:flexmark-all:0.64.8'
+
+    // 7. Test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
