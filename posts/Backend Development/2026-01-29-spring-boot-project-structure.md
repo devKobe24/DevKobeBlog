@@ -19,19 +19,19 @@ thumbnail: /assets/img/thumbnail/BackendDevelopment.jpg
 
 ## 📋 목차
 
-1. [왜 프로젝트 구조가 중요한가?](#1-왜-프로젝트-구조가-중요한가)
-2. [계층형 구조 (Layered Architecture)](#2-계층형-구조-layered-architecture)
-3. [도메인 중심 구조 (Package by Feature)](#3-도메인-중심-구조-package-by-feature)
-4. [계층 + 도메인 혼합 구조](#4-계층--도메인-혼합-구조)
-5. [DDD 스타일 (Domain Driven Design)](#5-ddd-스타일-domain-driven-design)
-6. [헥사고날/클린 아키텍처](#6-헥사고날클린-아키텍처)
-7. [패턴 비교와 선택 가이드](#7-패턴-비교와-선택-가이드)
-8. [필수 공통 패키지 구성](#8-필수-공통-패키지-구성)
-9. [마이그레이션 전략](#9-마이그레이션-전략)
-10. [핵심 요약](#10-핵심-요약)
+1. [왜 프로젝트 구조가 중요한가?](#Why-Is-Project-Structure-Important)
+2. [계층형 구조 (Layered Architecture)](#Layered-Architecture)
+3. [도메인 중심 구조 (Package by Feature)](#Domain-Centric-Structure-package-by-feature)
+4. [계층 + 도메인 혼합 구조](#Hybrid-Structure-Layered-Domain-Based)
+5. [DDD 스타일 (Domain Driven Design)](#DDD-Style-Domain-Driven-Design)
+6. [헥사고날/클린 아키텍처](#Hexagonal-Clean-Architecture)
+7. [패턴 비교와 선택 가이드](#Pattern-Comparison-and-Selection-Guide)
+8. [필수 공통 패키지 구성](#Essential-Shared-Package-Structure)
+9. [마이그레이션 전략](#Migration-Strategy)
+10. [핵심 요약](#Key-Takeaways)
 
 ---
-
+<a id="Why-Is-Project-Structure-Important"></a>
 ## 1️⃣ 왜 프로젝트 구조가 중요한가?
 
 ### 💡 프로젝트 구조가 결정하는 것들
@@ -56,7 +56,7 @@ thumbnail: /assets/img/thumbnail/BackendDevelopment.jpg
 | **계층 분리** | 각 계층의 역할 명확히 | Presentation ↔ Business ↔ Data |
 
 ---
-
+<a id="Layered-Architecture"></a>
 ## 2️⃣ 계층형 구조 (Layered Architecture)
 
 ### 📌 개념
@@ -242,7 +242,7 @@ public class Post extends BaseTimeEntity {
 ```
 
 ---
-
+<a id="Domain-Centric-Structure-package-by-feature"></a>
 ## 3️⃣ 도메인 중심 구조 (Package by Feature)
 
 ### 📌 개념
@@ -419,7 +419,7 @@ public class Post extends BaseTimeEntity {
 ```
 
 ---
-
+<a id="Hybrid-Structure-Layered-Domain-Based"></a>
 ## 4️⃣ 계층 + 도메인 혼합 구조
 
 ### 📌 개념
@@ -533,7 +533,7 @@ PostRepositoryImpl (infrastructure)
 ```
 
 ---
-
+<a id="DDD-Style-Domain-Driven-Design"></a>
 ## 5️⃣ DDD 스타일 (Domain Driven Design)
 
 ### 📌 개념
@@ -839,7 +839,7 @@ public class PostQueryService {
 ```
 
 ---
-
+<a id="Hexagonal-Clean-Architecture"></a>
 ## 6️⃣ 헥사고날/클린 아키텍처
 
 ### 📌 개념
@@ -1199,7 +1199,7 @@ public class PostJpaEntity {
 ```
 
 ---
-
+<a id="Pattern-Comparison-and-Selection-Guide"></a>
 ## 7️⃣ 패턴 비교와 선택 가이드
 
 ### 📊 5가지 패턴 종합 비교
@@ -1325,7 +1325,7 @@ Port & Adapter 패턴
 ```
 
 ---
-
+<a id="Essential-Shared-Package-Structure"></a>
 ## 8️⃣ 필수 공통 패키지 구성
 
 ### 📁 global/config (설정)
@@ -1517,7 +1517,7 @@ global/security/
 ```
 
 ---
-
+<a id="Migration-Strategy"></a>
 ## 9️⃣ 마이그레이션 전략
 
 ### 🔄 계층형 → 도메인 중심 전환
@@ -1602,7 +1602,7 @@ class PostServiceTest {
 - [ ] 문서 업데이트 (README, 위키)
 
 ---
-
+<a id="Key-Takeaways"></a>
 ## 🔟 핵심 요약
 
 ### 💡 가장 중요한 메시지
@@ -1731,13 +1731,13 @@ class PostServiceTest {
 ```java
 // 단순 조회만 하는 도메인
 tag/
-  ├─ TagController
+        ├─ TagController
   ├─ TagRepository      // Service 없이도 OK
   └─ Tag
 
 // 복잡한 비즈니스 로직이 있는 도메인
 payment/
-  ├─ PaymentController
+        ├─ PaymentController
   ├─ PaymentService     // 필수!
   ├─ PaymentValidator
   ├─ PaymentRepository
