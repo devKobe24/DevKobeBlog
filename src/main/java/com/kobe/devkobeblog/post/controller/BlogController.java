@@ -32,10 +32,11 @@ public class BlogController {
     private final TagRepository tagRepository;
 
     /**
-     * 메인 페이지: 게시글 목록 조회 (카테고리/태그 필터링 + 페이징)
+     * 메인 페이지: 게시글 목록 조회 (검색 / 카테고리 / 태그 필터링 + 페이징)
      */
     @GetMapping("/")
     public String index(
+            @RequestParam(required = false) String q,
             @RequestParam(required = false) String category,
             @RequestParam(required = false) String tag,
             Model model,
@@ -43,27 +44,31 @@ public class BlogController {
 
         Page<Post> postPage;
 
-        // 1. 카테고리 필터링
-        if (category != null && !category.isBlank()) {
+        // 1. 검색어가 있으면 제목 검색
+        if (q != null && !q.isBlank()) {
+            postPage = postRepository.findByTitleContainingIgnoreCaseAndStatus(q.trim(), PostStatus.PUBLIC, pageable);
+        }
+        // 2. 카테고리 필터링
+        else if (category != null && !category.isBlank()) {
             Category cat = categoryRepository.findByName(category)
                     .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카테고리입니다."));
             postPage = postRepository.findAllByCategoryAndStatus(cat, PostStatus.PUBLIC, pageable);
         }
-        // 2. 태그 필터링
+        // 3. 태그 필터링
         else if (tag != null && !tag.isBlank()) {
             postPage = postRepository.findAllByTagsNameAndStatus(tag, PostStatus.PUBLIC, pageable);
         }
-        // 3. 전체 조회
+        // 4. 전체 조회
         else {
             postPage = postRepository.findAllByStatus(PostStatus.PUBLIC, pageable);
         }
 
-        // 게시글 데이터
         model.addAttribute("posts", postPage);
-
-        // 사이드바 구성을 위한 데이터 (모든 카테고리 및 태그)
         model.addAttribute("categories", categoryRepository.findAll());
         model.addAttribute("tags", tagRepository.findAll());
+        model.addAttribute("q", q != null ? q : "");
+        model.addAttribute("category", category != null ? category : "");
+        model.addAttribute("tag", tag != null ? tag : "");
 
         return "index";
     }

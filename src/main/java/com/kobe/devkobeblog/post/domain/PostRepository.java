@@ -31,4 +31,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     // 태그별 조회
     Page<Post> findAllByTagsNameAndStatus(String tagName, PostStatus status, Pageable pageable);
+
+    // 제목 검색 (대소문자 무시, 공개 글만)
+    Page<Post> findByTitleContainingIgnoreCaseAndStatus(String keyword, PostStatus status, Pageable pageable);
 }

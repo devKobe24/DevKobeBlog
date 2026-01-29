@@ -27,4 +27,4 @@ blog:
     url: https://github.com/devKobe24/DevKobeBlog.git
     local-path: ./blog-data
     # 환경 변수 없으면 개발용 기본값 사용 (운영에서는 반드시 WEBHOOK_SECRET 설정)
-    webhook-secret: ${WEBHOOK_SECRET}
+    webhook-secret: ${WEBHOOK_SECRET:dev-webhook-secret}
