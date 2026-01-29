@@ -19,19 +19,19 @@ thumbnail: /assets/img/thumbnail/BackendDevelopment.jpg
 
 ## 📋 목차
 
-1. [@Value가 뭔가요?](#1-value가-뭔가요)
-2. [언제 사용해야 할까?](#2-언제-사용해야-할까)
-3. [주입 가능한 값의 종류](#3-주입-가능한-값의-종류)
-4. [주입 방식 비교](#4-주입-방식-비교)
-5. [절대 사용하면 안 되는 경우](#5-절대-사용하면-안-되는-경우)
-6. [@Value vs @ConfigurationProperties](#6-value-vs-configurationproperties)
-7. [실무 패턴과 Best Practices](#7-실무-패턴과-best-practices)
-8. [흔한 실수와 해결책](#8-흔한-실수와-해결책)
-9. [테스트 전략](#9-테스트-전략)
-10. [핵심 요약](#10-핵심-요약)
+1. [@Value가 뭔가요?](#What-Is-Value)
+2. [언제 사용해야 할까?](#When-Should-It-Be-Used)
+3. [주입 가능한 값의 종류](#Types-of-Values-That-Can-Be-Injected)
+4. [주입 방식 비교](#Comparison-of-Injection-Methods)
+5. [절대 사용하면 안 되는 경우](#Cases-Where-It-Should-Never-Be-Used)
+6. [@Value vs @ConfigurationProperties](#value-vs-configurationproperties)
+7. [실무 패턴과 Best Practices](#In-thefield-pattern-and-best-practices)
+8. [흔한 실수와 해결책](#common-mistake-and-solution)
+9. [테스트 전략](#test-strategy)
+10. [핵심 요약](#core-summary)
 
 ---
-
+<a id="What-Is-Value"></a>
 ## 1️⃣ @Value가 뭔가요?
 
 **@Value**는 Spring이 관리하는 값(property, 환경변수, 상수, 표현식 등)을 필드·생성자·메서드 파라미터에 주입해주는 애노테이션입니다.
@@ -73,7 +73,7 @@ private String name;  // "MyApp"이 자동으로 주입됨!
 ```
 
 ---
-
+<a id="When-Should-It-Be-Used"></a>
 ## 2️⃣ 언제 사용해야 할까?
 
 ### ✅ Case 1: application.yml/properties 값 주입 (가장 흔함)
@@ -420,7 +420,7 @@ public class EmailService {
 |   🎯 **명확성**    | 의존성이 명시적     |
 
 ---
-
+<a id="Types-of-Values-That-Can-Be-Injected"></a>
 ## 3️⃣ 주입 가능한 값의 종류
 
 ### 📊 값의 출처 우선순위
@@ -595,7 +595,7 @@ app:
 ```
 
 ---
-
+<a id="Comparison-of-Injection-Methods"></a>
 ## 4️⃣ 주입 방식 비교
 
 ### 📌 3가지 주입 방식
@@ -692,7 +692,7 @@ public class SetterInjection {
 ```
 
 ---
-
+<a id="Cases-Where-It-Should-Never-Be-Used"></a>
 ## 5️⃣ 절대 사용하면 안 되는 경우
 
 ### ❌ Case 1: 설정이 여러 개인 경우 (묶음 설정)
@@ -916,7 +916,7 @@ public class ConfigImpl implements ConfigInterface {
 ```
 
 ---
-
+<a id="value-vs-configurationproperties"></a>
 ## 6️⃣ @Value vs @ConfigurationProperties
 
 ### 📊 상세 비교
@@ -1111,7 +1111,7 @@ public class EmailProperties {
 ```
 
 ---
-
+<a id="In-thefield-pattern-and-best-practices"></a>
 ## 7️⃣ 실무 패턴과 Best Practices
 
 ### 🌟 패턴 1: 환경별 설정 분리
@@ -1336,7 +1336,7 @@ public class DataSourceConfig {
 ```
 
 ---
-
+<a id="common-mistake-and-solution"></a>
 ## 8️⃣ 흔한 실수와 해결책
 
 ### ⚠️ 실수 1: 존재하지 않는 프로퍼티
@@ -1522,7 +1522,7 @@ app:
 ```
 
 ---
-
+<a id="test-strategy"></a>
 ## 9️⃣ 테스트 전략
 
 ### 🧪 단위 테스트
@@ -1636,7 +1636,7 @@ class DatabaseIntegrationTest {
 ```
 
 ---
-
+<a id="core-summary"></a>
 ## 🔟 핵심 요약
 
 ### 💡 한 문장 정리
@@ -1865,4 +1865,5 @@ private String value;
 **🎉 이제 @Value를 완벽하게 이해하고 실무에 적용할 수 있습니다!**
 
 > 💡 **마지막 조언**: 간단한 설정은 `@Value`, 복잡한 설정은 `@ConfigurationProperties`를 사용하세요. 보안 정보는 반드시 환경변수로 관리하세요!
+
 
