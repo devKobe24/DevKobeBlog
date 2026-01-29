@@ -2,6 +2,8 @@ package com.kobe.devkobeblog.common.component;
 
 import com.kobe.devkobeblog.post.dto.PostParseResult;
 import com.vladsch.flexmark.ast.Image;
+import com.vladsch.flexmark.ext.gfm.tasklist.TaskListExtension;
+import com.vladsch.flexmark.ext.tables.TablesExtension;
 import com.vladsch.flexmark.ext.yaml.front.matter.AbstractYamlFrontMatterVisitor;
 import com.vladsch.flexmark.ext.yaml.front.matter.YamlFrontMatterExtension;
 import com.vladsch.flexmark.html.HtmlRenderer;
@@ -19,6 +21,7 @@ import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -42,9 +45,16 @@ public class MarkdownProcessor {
 
     private final S3Uploader s3Uploader;
 
-    // Flexmark 설정 (YAML Front Matter 활성화)
+    // Flexmark 설정: YAML Front Matter, 테이블, GFM 태스크 리스트(체크박스)
     private static final MutableDataSet OPTIONS = new MutableDataSet()
-            .set(Parser.EXTENSIONS, Collections.singletonList(YamlFrontMatterExtension.create()));
+            .set(Parser.EXTENSIONS, Arrays.asList(
+                    YamlFrontMatterExtension.create(),
+                    TablesExtension.create(),
+                    TaskListExtension.create()))
+            .set(TablesExtension.COLUMN_SPANS, false)
+            .set(TablesExtension.APPEND_MISSING_COLUMNS, true)
+            .set(TablesExtension.DISCARD_EXTRA_COLUMNS, true)
+            .set(TablesExtension.HEADER_SEPARATOR_COLUMN_MATCH, true);
     private static final Parser PARSER = Parser.builder(OPTIONS).build();
     private static final HtmlRenderer RENDERER = HtmlRenderer.builder(OPTIONS).build();
 
