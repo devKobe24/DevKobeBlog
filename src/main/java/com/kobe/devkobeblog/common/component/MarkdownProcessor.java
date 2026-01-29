@@ -2,6 +2,7 @@ package com.kobe.devkobeblog.common.component;
 
 import com.kobe.devkobeblog.post.dto.PostParseResult;
 import com.vladsch.flexmark.ast.Image;
+import com.vladsch.flexmark.ext.anchorlink.AnchorLinkExtension;
 import com.vladsch.flexmark.ext.gfm.tasklist.TaskListExtension;
 import com.vladsch.flexmark.ext.tables.TablesExtension;
 import com.vladsch.flexmark.ext.yaml.front.matter.AbstractYamlFrontMatterVisitor;
@@ -50,7 +51,12 @@ public class MarkdownProcessor {
             .set(Parser.EXTENSIONS, Arrays.asList(
                     YamlFrontMatterExtension.create(),
                     TablesExtension.create(),
-                    TaskListExtension.create()))
+                    TaskListExtension.create(),
+                    AnchorLinkExtension.create()
+            ))
+            .set(AnchorLinkExtension.ANCHORLINKS_SET_ID, true) // h 태그에 id 속성 부여
+            .set(AnchorLinkExtension.ANCHORLINKS_ANCHOR_CLASS, "anchor-links") // 링크 클래스명
+            .set(AnchorLinkExtension.ANCHORLINKS_TEXT_SUFFIX, "") // 텍스트 뒤에 붙을 기호 (없음으로 설정)
             .set(TablesExtension.COLUMN_SPANS, false)
             .set(TablesExtension.APPEND_MISSING_COLUMNS, true)
             .set(TablesExtension.DISCARD_EXTRA_COLUMNS, true)
