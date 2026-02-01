@@ -5,7 +5,7 @@ tags:
   - Backend Development
   - Spring Data JPA
 date: 2026-02-01
-thumbnail: "/assets/img/thumbnail/troubleshooting.jpg"
+thumbnail: /assets/img/thumbnail/troubleshooting.jpg
 ---
 
 # 🌵 Spring Data JPA로 다육식물 쇼핑몰 만들기
