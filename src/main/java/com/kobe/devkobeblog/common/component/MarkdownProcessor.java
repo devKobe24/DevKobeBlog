@@ -5,6 +5,7 @@ import com.vladsch.flexmark.ast.Image;
 import com.vladsch.flexmark.ext.anchorlink.AnchorLinkExtension;
 import com.vladsch.flexmark.ext.gfm.tasklist.TaskListExtension;
 import com.vladsch.flexmark.ext.tables.TablesExtension;
+import com.vladsch.flexmark.ext.toc.TocExtension;
 import com.vladsch.flexmark.ext.yaml.front.matter.AbstractYamlFrontMatterVisitor;
 import com.vladsch.flexmark.ext.yaml.front.matter.YamlFrontMatterExtension;
 import com.vladsch.flexmark.html.HtmlRenderer;
@@ -46,17 +47,26 @@ public class MarkdownProcessor {
 
     private final S3Uploader s3Uploader;
 
-    // Flexmark 설정: YAML Front Matter, 테이블, GFM 태스크 리스트(체크박스)
+    // Flexmark 설정: YAML Front Matter, 테이블, GFM 태스크 리스트(체크박스), 목차(TOC), 앵커 링크
     private static final MutableDataSet OPTIONS = new MutableDataSet()
             .set(Parser.EXTENSIONS, Arrays.asList(
                     YamlFrontMatterExtension.create(),
                     TablesExtension.create(),
                     TaskListExtension.create(),
+                    TocExtension.create(),
                     AnchorLinkExtension.create()
             ))
-            .set(AnchorLinkExtension.ANCHORLINKS_SET_ID, true) // h 태그에 id 속성 부여
-            .set(AnchorLinkExtension.ANCHORLINKS_ANCHOR_CLASS, "anchor-links") // 링크 클래스명
-            .set(AnchorLinkExtension.ANCHORLINKS_TEXT_SUFFIX, "") // 텍스트 뒤에 붙을 기호 (없음으로 설정)
+            // 헤더 ID 생성 (목차 링크 및 앵커용)
+            .set(HtmlRenderer.GENERATE_HEADER_ID, true)
+            .set(HtmlRenderer.RENDER_HEADER_ID, true)
+            .set(AnchorLinkExtension.ANCHORLINKS_SET_ID, true)
+            .set(AnchorLinkExtension.ANCHORLINKS_ANCHOR_CLASS, "anchor-links")
+            .set(AnchorLinkExtension.ANCHORLINKS_TEXT_SUFFIX, "")
+            // 목차(TOC) 설정: h2~h4 포함 (bitmask: 1<<2 | 1<<3 | 1<<4 = 28)
+            .set(TocExtension.LEVELS, (1 << 2) | (1 << 3) | (1 << 4))
+            .set(TocExtension.DIV_CLASS, "table-of-contents")
+            .set(TocExtension.LIST_CLASS, "toc-list")
+            // 테이블 설정
             .set(TablesExtension.COLUMN_SPANS, false)
             .set(TablesExtension.APPEND_MISSING_COLUMNS, true)
             .set(TablesExtension.DISCARD_EXTRA_COLUMNS, true)

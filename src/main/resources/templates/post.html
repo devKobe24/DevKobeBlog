@@ -1,6 +1,33 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
   <head th:replace="~{fragments/head :: headFragment}"></head>
+  <style>
+    /* 목차(TOC) 스타일 - [TOC] 플레이스홀더로 생성됨 */
+    .table-of-contents {
+      margin: 2rem 0;
+      padding: 1.5rem;
+      background: #f9fafb;
+      border-radius: 0.75rem;
+      border: 1px solid #e5e7eb;
+    }
+    .table-of-contents .toc-list {
+      list-style: none;
+      padding-left: 0;
+    }
+    .table-of-contents .toc-list ul {
+      list-style: none;
+      padding-left: 1rem;
+      margin-top: 0.25rem;
+      border-left: 2px solid #e5e7eb;
+    }
+    .table-of-contents a {
+      color: #374151;
+      text-decoration: none;
+    }
+    .table-of-contents a:hover {
+      color: #3b82f6;
+    }
+  </style>
   <body class="bg-white min-h-screen">
     <nav th:replace="~{fragments/nav :: navFragment}"></nav>
 
