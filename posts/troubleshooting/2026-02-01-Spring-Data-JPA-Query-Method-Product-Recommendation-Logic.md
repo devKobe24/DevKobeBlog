@@ -1,10 +1,10 @@
 ---
-title: "🌵Spring Data JPA, 쿼리 메서드와 추천 상품 로직"
+title: 🌵Spring Data JPA, 쿼리 메서드와 추천 상품 로직
 tags:
   - Troubleshooting
   - Backend Development
   - Spring Data JPA
-date: "2026-02-01"
+date: 2026-02-01
 thumbnail: "/assets/img/thumbnail/troubleshooting.jpg"
 ---
 
