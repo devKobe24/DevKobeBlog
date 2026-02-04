@@ -37,6 +37,7 @@ services:
       - CLOUD_AWS_CREDENTIALS_ACCESS_KEY=${AWS_ACCESS_KEY}
       - CLOUD_AWS_CREDENTIALS_SECRET_KEY=${AWS_SECRET_KEY}
       - BLOG_GIT_WEBHOOK_SECRET=${WEBHOOK_SECRET}
+      - BLOG_SITE_URL=${BLOG_SITE_URL:-https://devkobe-blog.com}
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
     depends_on:
       - blog-db
