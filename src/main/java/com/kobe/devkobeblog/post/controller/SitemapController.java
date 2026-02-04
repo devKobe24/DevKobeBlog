@@ -30,6 +30,20 @@ public class SitemapController {
     @Value("${blog.site.url}")
     private String baseUrl;
 
+    @GetMapping(value = "/robots.txt", produces = MediaType.TEXT_PLAIN_VALUE)
+    public ResponseEntity<String> robots() {
+        String base = baseUrl.endsWith("/") ? baseUrl.substring(0, baseUrl.length() - 1) : baseUrl;
+        String txt = """
+                User-agent: *
+                Allow: /
+
+                Sitemap: %s/sitemap.xml
+                """.formatted(base);
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType("text/plain; charset=UTF-8"))
+                .body(txt);
+    }
+
     @GetMapping(value = "/sitemap.xml", produces = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity<String> sitemap() {
         String base = baseUrl.endsWith("/") ? baseUrl.substring(0, baseUrl.length() - 1) : baseUrl;
