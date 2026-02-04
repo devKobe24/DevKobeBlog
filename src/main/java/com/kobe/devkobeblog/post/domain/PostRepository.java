@@ -26,6 +26,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     Page<Post> findAllByStatus(PostStatus status, Pageable pageable);
 
+    // 공개 게시글 목록 (sitemap 등용)
+    List<Post> findAllByStatusOrderByPublishedAtDesc(PostStatus status);
+
     // 카테고리별 조회
     Page<Post> findAllByCategoryAndStatus(Category category, PostStatus status, Pageable pageable);
 
