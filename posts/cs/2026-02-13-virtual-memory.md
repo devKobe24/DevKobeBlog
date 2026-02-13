@@ -1,4 +1,49 @@
-Memory Management Unit)
+---
+title: 🗺️ 가상 메모리(Virtual Memory)
+published: true
+tags:
+  - CS
+  - 컴퓨터 구조
+  - Programming
+  - Java
+  - VirtualMemory
+  - Memory
+  - OperatingSystem
+  - MemoryManagement
+  - MMU
+  - Paging
+  - ComputerScience
+
+date: 2026-02-13
+thumbnail: /assets/img/thumbnail/cs.jpg
+---
+
+# 🗺️ 가상 메모리(Virtual Memory)
+
+> **한 줄 요약 :** 각 프로세스에게 독립된 가상 주소 공간을 제공하고, MMU가 이를 물리 주소로 변환해 **메모리 충돌을 원천 차단**하는 기술이다.
+
+---
+
+## 💡 핵심 아이디어
+
+프로세스 A와 B가 같은 가상 주소 `0x1000`을 사용한다고 해도 문제가 없다.
+
+```
+프로세스 A : 가상 주소 0x1000  →  물리 주소 0xA000
+프로세스 B : 가상 주소 0x1000  →  물리 주소 0xF000
+```
+
+겉으로는 같아 보이지만, RAM에서는 **전혀 다른 위치**를 가리킨다.  
+각 프로세스는 자기만의 독립된 메모리 공간을 가진다고 **착각**하며, 그 착각이 안전을 만든다.
+
+---
+
+## ⚙️ 동작 원리 : 주소 변환(Address Translation)
+
+```
+프로세스 → 가상 주소 요청
+             ↓
+     MMU(Memory Management Unit)
              ↓
      페이지 테이블(Page Table) 조회
              ↓
@@ -41,52 +86,7 @@ JVM 프로세스 2  →  가상 주소 공간 독립
 ## 📌 핵심 요약
 
 | 개념              | 설명                                      |
-| ----------------- | -----------------
-title: 🗺️ 가상 메모리(Virtual Memory)
-published: true
-tags:
-    - CS
-    - 컴퓨터 구조
-    - Programming
-    - Java
-    - VirtualMemory
-    - Memory
-    - OperatingSystem
-    - MemoryManagement
-    - MMU
-    - Paging
-    - ComputerScience
-
-date: 2026-02-13
-thumbnail: /assets/img/thumbnail/cs.jpg
----
-
-# 🗺️ 가상 메모리(Virtual Memory)
-
-> **한 줄 요약 :** 각 프로세스에게 독립된 가상 주소 공간을 제공하고, MMU가 이를 물리 주소로 변환해 **메모리 충돌을 원천 차단**하는 기술이다.
-
----
-
-## 💡 핵심 아이디어
-
-프로세스 A와 B가 같은 가상 주소 `0x1000`을 사용한다고 해도 문제가 없다.
-
-```
-프로세스 A : 가상 주소 0x1000  →  물리 주소 0xA000
-프로세스 B : 가상 주소 0x1000  →  물리 주소 0xF000
-```
-
-겉으로는 같아 보이지만, RAM에서는 **전혀 다른 위치**를 가리킨다.  
-각 프로세스는 자기만의 독립된 메모리 공간을 가진다고 **착각**하며, 그 착각이 안전을 만든다.
-
----
-
-## ⚙️ 동작 원리 : 주소 변환(Address Translation)
-
-```
-프로세스 → 가상 주소 요청
-             ↓
-     MMU(--------------------------- |
+| ----------------- | ----------------------------------------- |
 | **가상 주소**     | 프로세스가 실제로 사용하는 논리적 주소    |
 | **물리 주소**     | RAM의 실제 위치                           |
 | **MMU**           | 가상 → 물리 주소 변환 담당 하드웨어       |
