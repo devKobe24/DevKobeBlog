@@ -1,12 +1,12 @@
-i---
+---
 title: 🔢 구구단, 그래도 외워야 할까?
 published: true
 tags:
-    - mathematics
-    - learning
-    - self-improvement
-    - productivity
-    
+  - mathematics
+  - learning
+  - self-improvement
+  - productivity
+
 date: 2026-02-15
 thumbnail: /assets/img/thumbnail/learning.jpg
 ---
