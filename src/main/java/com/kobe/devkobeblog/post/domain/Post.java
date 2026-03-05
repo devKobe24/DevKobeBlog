@@ -6,8 +6,6 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -28,6 +26,14 @@ import java.util.Set;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_post_category_slug",
+                        columnNames = {"category_id", "slug"}
+                )
+        }
+)
 public class Post extends BaseTimeEntity {
 
     @Id
@@ -44,6 +50,10 @@ public class Post extends BaseTimeEntity {
 
     @Column(nullable = false, unique = true)
     private String filePath;
+
+    // ✅ URL path segment #2 (e.g. "protocol")
+    @Column(name = "slug", nullable = false, length = 200)
+    private String slug;
 
     private LocalDateTime publishedAt;
 
@@ -70,12 +80,21 @@ public class Post extends BaseTimeEntity {
         this.tags.addAll(newTags);
     }
 
+    /**
+     * ✅ 권장: filePath 기반으로 categorySlug/slug가 바뀔 일은 거의 없지만,
+     * 폴더명/파일명 변경을 지원하려면 update에 포함시키는 편이 운영상 편함.
+     */
+    public void updateRouting(String slug) {
+        this.slug = slug;
+    }
+
     @Builder
     public Post(
             String title,
             String content,
             String thumbnail,
             String filePath,
+            String slug,
             LocalDateTime publishedAt,
             PostStatus status
     ) {
@@ -83,6 +102,7 @@ public class Post extends BaseTimeEntity {
         this.content = content;
         this.thumbnail = thumbnail;
         this.filePath = filePath;
+        this.slug = slug;
         this.publishedAt = publishedAt;
         this.status = status;
     }
