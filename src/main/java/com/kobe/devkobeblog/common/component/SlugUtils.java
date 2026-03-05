@@ -2,6 +2,8 @@ package com.kobe.devkobeblog.common.component;
 
 import java.text.Normalizer;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * packageName    : com.kobe.devkobeblog.common.component
@@ -15,6 +17,8 @@ import java.util.Locale;
  * 2026. 3. 5.        kobe / Minsung Kang       최초 생성
  */
 public final class SlugUtils {
+
+    private static final Pattern DATE_PREFIX = Pattern.compile("^(\\d{4}-\\d{2}-\\d{2})-");
 
     private SlugUtils() {
     }
@@ -30,31 +34,15 @@ public final class SlugUtils {
      * - trim hyphens
      */
     public static String slugify(String input) {
-        if (input == null) {
-            return "";
-        }
-
+        if (input == null) return "";
         String s = input.trim();
-        if (s.isEmpty()) {
-            return "";
-        }
+        if (s.isEmpty()) return "";
 
-        // Normalize unicode to reduce weird variants
         s = Normalizer.normalize(s, Normalizer.Form.NFKC);
-
-        // Replace spaces and underscore with hyphen
         s = s.replaceAll("[\\s_]+", "-");
-
-        // Lowercase
         s = s.toLowerCase(Locale.ROOT);
-
-        // Remove everything except a-z, 0-9, hyphen
         s = s.replaceAll("[^a-z0-9\\-]", "");
-
-        // Collapse multiple hyphens
         s = s.replaceAll("\\-+", "-");
-
-        // Trim leading/triling hyphens
         s = s.replaceAll("^\\-+|\\-+$", "");
 
         return s;
@@ -68,19 +56,11 @@ public final class SlugUtils {
      * - "2026-03-05-Core-Summary-Of-Network-Basic.md-> "core-summary-of-network-basic"
      */
     public static String extractSlugFromFilename(String filename) {
-        if (filename == null) {
-            return "";
-        }
-
+        if (filename == null) return "";
         String name = filename.trim();
-        if (name.isEmpty()) {
-            return "";
-        }
+        if (name.isEmpty()) return "";
 
-        // Remove extension (.md or .markdown)
         name = name.replaceFirst("(?i)\\.(md|markdown)$", "");
-
-        // Remove date prefix: YYYY-MM-DD-
         name = name.replaceFirst("^\\d{4}-\\d{2}-\\d{2}-", "");
 
         return slugify(name);
@@ -97,6 +77,28 @@ public final class SlugUtils {
      * Normalize file path separators to '/' for cross-platform consistency.
      */
     public static String normalizePath(String path) {
-        return path == null ? "" : path.replace("\\", "/");
+        if (path == null) {
+            return "";
+        }
+
+        String normalized = path.replace("\\", "/");
+
+        // collapse duplicate slashes
+        normalized = normalized.replaceAll("/+", "/");
+
+        // trim leading/trailing slashes
+        normalized = normalized.replaceAll("^/+|/+$", "");
+
+        return normalized;
+    }
+
+    // ✅ 추가: "2026-02-13-virtual-memory.md" -> "2026-02-13"
+    public static String extractDatePrefix(String filename) {
+        if (filename == null) return "";
+        String s = filename.trim();
+        if (s.isEmpty()) return "";
+
+        Matcher m = DATE_PREFIX.matcher(s);
+        return m.find() ? m.group(1) : "";
     }
 }
