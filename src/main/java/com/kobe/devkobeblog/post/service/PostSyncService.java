@@ -8,7 +8,7 @@ import com.kobe.devkobeblog.post.dto.PostParseResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.hibernate.validator.internal.constraintvalidators.hv.NormalizedValidator;
+import com.kobe.devkobeblog.post.domain.TagRepository;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,7 +43,6 @@ public class PostSyncService {
     private final PostRepository postRepository;
     private final CategoryRepository categoryRepository;
     private final TagRepository tagRepository;
-    private final NormalizedValidator normalizedValidator;
 
     @Async("syncTaskExecutor")
     @Transactional
