@@ -7,8 +7,6 @@ import com.kobe.devkobeblog.post.domain.*;
 import com.kobe.devkobeblog.post.dto.PostParseResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.jgit.api.errors.GitAPIException;
-import com.kobe.devkobeblog.post.domain.TagRepository;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -43,42 +42,68 @@ public class PostSyncService {
     private final PostRepository postRepository;
     private final CategoryRepository categoryRepository;
     private final TagRepository tagRepository;
+    private final java.util.concurrent.locks.ReentrantLock syncLock = new java.util.concurrent.locks.ReentrantLock();
 
     @Async("syncTaskExecutor")
-    @Transactional
     public void syncPosts() {
-        try {
-            // 1. Git 동기화 (Clone or Pull)
-            Path gitRoot = gitUtils.sync();
-            Path postsDir = gitRoot.resolve("posts"); // 글 저장 폴더
+        if (!syncLock.tryLock()) {
+            log.warn("syncPosts is already running. Skip this run.");
+            return;
+        }
 
-            // 2. 파일 처리 및 DB 반영 (Upsert)
-            Set<String> processedFilePaths = new HashSet<>();
+        boolean completed = false;
+        Set<String> processedFilePaths = new HashSet<>();
+
+        try {
+            Path gitRoot = gitUtils.sync();
+            Path postsDir = gitRoot.resolve("posts");
 
             if (Files.exists(postsDir)) {
                 try (Stream<Path> paths = Files.walk(postsDir)) {
                     paths.filter(p -> p.toString().endsWith(".md"))
                             .forEach(filePath -> {
+                                String rel = null;
                                 try {
-                                    processSinglePost(filePath, gitRoot);
-                                    // Git Root 기준 상대 경로 저장 (예: posts/network/2026-03-05-protocol.md)
-                                    processedFilePaths.add(normalizedPath(gitRoot.relativize(filePath).toString()));
-                                } catch (IOException e) {
-                                    throw new RuntimeException(e);
+                                    rel = normalizedPath(gitRoot.relativize(filePath).toString());
+                                    // ✅ 파일 1개 단위 트랜잭션(권장)
+                                    processSinglePostTx(filePath, gitRoot);
+                                    processedFilePaths.add(rel);
+                                } catch (Exception e) {
+                                    log.error("Failed to process file: {}", (rel != null ? rel : filePath), e);
+                                    // 운영 안정성: 한 파일 실패로 전체 sync를 중단하지 않음
                                 }
                             });
                 }
             }
 
-            // 3. 삭제된 파일 처리 (Soft Delete)
-            handleDeletedPosts(processedFilePaths);
+            completed = true;
+            log.info("Post sync scan completed. processed={}", processedFilePaths.size());
 
-            log.info("Post sync completed successfully.");
-
-        } catch (IOException | GitAPIException e) {
+        } catch (Exception e) {
             log.error("Failed to sync posts.", e);
-            throw new RuntimeException("Git Sync Failed", e);
+        } finally {
+            try {
+                if (completed && !processedFilePaths.isEmpty()) {
+                    // ✅ delete phase는 성공한 경우에만
+                    handleDeletedPostsTx(processedFilePaths);
+                    log.info("Post sync completed successfully.");
+                } else {
+                    log.warn("Post sync did NOT complete or processed is empty. Skipping delete phase.");
+                }
+            } finally {
+                syncLock.unlock();
+            }
         }
+    }
+
+    @Transactional(propagation = org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
+    protected void processSinglePostTx(Path filePath, Path gitRoot) throws IOException {
+        processSinglePost(filePath, gitRoot);
+    }
+
+    @Transactional
+    protected void handleDeletedPostsTx(Set<String> processedFilePaths) {
+        handleDeletedPosts(processedFilePaths);
     }
 
     private void processSinglePost(Path filePath, Path gitRoot) throws IOException {
@@ -137,15 +162,36 @@ public class PostSyncService {
     }
 
     private Category getOrCreateCategory(String name, String slug) {
-        return categoryRepository.findBySlug(slug)
-                .map(existing -> {
-                    // 폴더명이 바뀐 경우(표시명) 반영
-                    if (!existing.getName().equals(name)) {
-                        existing.rename(name, slug);
-                    }
-                    return existing;
-                })
-                .orElseGet(() -> categoryRepository.save(new Category(name, slug)));
+
+        // 1. slug로 조회
+        Optional<Category> bySlug = categoryRepository.findBySlug(slug);
+        if (bySlug.isPresent()) {
+            Category existing = bySlug.get();
+
+            if (!existing.getName().equals(name)) {
+                existing.rename(name, slug);
+            }
+
+            return existing;
+        }
+
+        // 2. name으로 조회 (레거시 데이터 대응)
+        Optional<Category> byName = categoryRepository.findByName(name);
+        if (byName.isPresent()) {
+            Category existing = byName.get();
+
+            if (existing.getSlug() == null ||
+                    existing.getSlug().isBlank() ||
+                    !existing.getSlug().equals(slug)) {
+
+                existing.rename(name, slug);
+            }
+
+            return existing;
+        }
+
+        // 3. 신규 생성
+        return categoryRepository.save(new Category(name, slug));
     }
 
     private Set<Tag> getOrCreateTags(List<String> tagNames) {
