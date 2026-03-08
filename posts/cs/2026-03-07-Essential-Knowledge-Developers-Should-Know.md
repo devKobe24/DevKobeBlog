@@ -52,7 +52,7 @@ int c = a + b;  // 명령어: 더하라 a와 b를 → CPU의 ALU가 실제로 �
 
 노트북이든, 서버든, 스마트폰이든 — 컴퓨터를 이루는 핵심 부품은 크게 다르지 않습니다.
 
-<img src="https://github.com/devKobe24/images2/blob/main/computer-structure-6.png?raw=true"/>
+<img src="https://raw.githubusercontent.com/devKobe24/images2/main/computer-structure-6.png"/>
 
 | 부품             | 역할                        | 특징                       |
 | ---------------- | --------------------------- | -------------------------- |
@@ -70,7 +70,7 @@ CPU는 명령어를 **읽고(Fetch) → 해석하고(Decode) → 실행하는(Ex
 
 ### CPU의 내부 구조
 
-<img src="https://github.com/devKobe24/images2/blob/main/computer-structure-4-cpu.png?raw=true"/>
+<img src="https://raw.githubusercontent.com/devKobe24/images2/main/computer-structure-4-cpu.png"/>
 
 ### 핵심 구성요소 3가지
 
@@ -104,7 +104,7 @@ CPU는 명령어를 **읽고(Fetch) → 해석하고(Decode) → 실행하는(Ex
 
 **현재 실행 중인 프로그램**을 저장하는 부품입니다.
 
-<img src="https://github.com/devKobe24/images2/blob/main/computer-structure-5-memory.png?raw=true"/>
+<img src="https://raw.githubusercontent.com/devKobe24/images2/main/computer-structure-5-memory.png"/>
 
 #### 메모리의 2가지 핵심 개념
 
@@ -173,7 +173,7 @@ CPU와 메모리 사이의 **속도 차이를 해결**하기 위한 고속 임�
 모든 핵심 부품들은 **메인보드(마더보드)** 위에 연결됩니다.
 부품들이 서로 데이터를 주고받는 통로가 바로 **버스(Bus)** 입니다.
 
-<img src="https://github.com/devKobe24/images2/blob/main/computer-structure-6.png?raw=true"/>
+<img src="https://raw.githubusercontent.com/devKobe24/images2/main/computer-structure-6.png"/>
 
 **시스템 버스의 3가지 구성요소:**
 
